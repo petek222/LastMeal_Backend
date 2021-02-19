@@ -1,0 +1,9 @@
+server {
+    listen 80;
+    server_name 54.196.133.30;
+
+    location / {
+        include proxy_params;
+        proxy_pass http://unix:/home/ubuntu/last_meal/last_meal.sock;
+    }
+}

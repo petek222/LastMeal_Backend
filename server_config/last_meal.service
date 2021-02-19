@@ -1,0 +1,13 @@
+[Unit]
+Description=Gunicorn instance to serve last_meal
+After=network.target
+
+[Service]
+User=ubuntu
+Group=www-data
+WorkingDirectory=/home/ubuntu/last_meal
+Environment="PATH=/home/ubuntu/last_meal/venv/bin"
+ExecStart=/home/ubuntu/last_meal/venv/bin/gunicorn --workers 3 --bind unix:last_meal.sock -m 007 lastMeal.wsgi:app
+
+[Install]
+WantedBy=multi-user.target
