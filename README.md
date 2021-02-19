@@ -36,3 +36,5 @@ Then navigate to ~/last\_meal and run
 . venv/bin/activate
 flask run --host=0.0.0.0
 ```
+
+And send requests to http://$SERVER_IP:5000
