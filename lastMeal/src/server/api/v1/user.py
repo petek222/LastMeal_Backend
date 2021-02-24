@@ -1,11 +1,13 @@
 from flask import Flask
-from flask_pymongo import PyMongo # Check if this import is okay: was not working until I disabled pylint
+import pymongo # Check if this import is okay: was not working until I disabled pylint
+from pymongo import MongoClient
 
 app = Flask(__name__)
 
 # This is where we will put the connection URL to our DB as desired for PyMongo, and bind it to our app
 app.config["MONGO_URI"] = "mongodb://localhost:27017/myDatabase"
-mongo = PyMongo(app)
+client = MongoClient()
+db = client.new_db
 
 # This is how we would connect to a database for mongoengine
 # connect('mongoengine_test', host='localhost', port=27017)
