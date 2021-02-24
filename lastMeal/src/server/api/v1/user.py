@@ -7,6 +7,8 @@ from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
 
+# import Ming
+
 # app = Flask(__name__)
 
 # This is where we will put the connection URL to our DB as desired for PyMongo, and bind it to our app
@@ -27,12 +29,20 @@ from flask import (
 #     return render_template("index.html",
 #         online_users=online_users)
 
+# mongo_client = MongoClient('localhost', 27017)
+# host_info = mongo_client['HOST']
+# print ("\nhost:", host_info)
+
 user = Blueprint('user', __name__)
 # @simple_page.route('/<page>')
 
 # Create/Register a new user
 @user.route('/v1/user', methods=['GET'])
 def register_user():
+    print("Hey There!")
+    mongo_client = MongoClient('localhost', 27017)
+    host_info = mongo_client['HOST']
+    print ("\nhost:", host_info)
     return "<h1>Here is where we can have the user register!</h1>"
 
 # Update preexising user profile
