@@ -1,8 +1,7 @@
 import os
 
 from flask import Flask
-from lastMeal.models import User
-
+from lastMeal.src.server.api.v1.user import user
 
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
