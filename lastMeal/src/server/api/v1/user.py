@@ -1,37 +1,13 @@
 from flask import Flask
-import pymongo # Check if this import is okay: was not working until I disabled pylint
+import pymongo
 from pymongo import MongoClient
 import functools
+from lastMeal.src.server.models.user import User # This might be fine?? Linter complaining but not interpreter
 
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
 
-# import Ming
-
-# app = Flask(__name__)
-
-# This is where we will put the connection URL to our DB as desired for PyMongo, and bind it to our app
-# app.config["MONGO_URI"] = "mongodb://localhost:27017/myDatabase"
-# client = MongoClient()
-# db = client.new_db
-
-# This is how we would connect to a database for mongoengine
-# connect('mongoengine_test', host='localhost', port=27017)
-
-# We also might want to use MONGOTHON: a python-api that mimics mongoose JS
-
-## Look a MING for schema
-
-# PyMongo usage example
-# def home_page():
-#     online_users = mongo.db.users.find({"online": True})
-#     return render_template("index.html",
-#         online_users=online_users)
-
-# mongo_client = MongoClient('localhost', 27017)
-# host_info = mongo_client['HOST']
-# print ("\nhost:", host_info)
 
 user = Blueprint('user', __name__)
 # @simple_page.route('/<page>')
@@ -43,6 +19,11 @@ def register_user():
     mongo_client = MongoClient('localhost', 27017)
     host_info = mongo_client['HOST']
     print ("\nhost:", host_info)
+    print("lets create a user!")
+    
+    # Using mongoengine/pymongo schema
+    my_user = User(email='pedrobabon@gmail.com', first_name='pedro', last_name='babon').save()
+
     return "<h1>Here is where we can have the user register!</h1>"
 
 # Update preexising user profile
