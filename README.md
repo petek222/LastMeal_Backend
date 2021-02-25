@@ -33,8 +33,10 @@ sudo systemctl stop last_meal
 Then navigate to ~/last\_meal and run 
 
 ```
+export FLASK_APP=lastMeal
+export FLASK_ENV=development
 . venv/bin/activate
 flask run --host=0.0.0.0
 ```
 
-And send requests to http://$SERVER_IP:5000
+And send requests to http://$SERVER\_IP:5000
