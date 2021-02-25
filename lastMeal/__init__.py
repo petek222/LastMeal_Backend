@@ -1,7 +1,8 @@
 import os
 
 from flask import Flask
-from lastMeal.src.server.api.v1.user import user
+from lastMeal.models import User
+
 
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
@@ -25,7 +26,7 @@ def create_app(test_config=None):
 
     @app.route('/hello')
     def hello():
-        my_user = User(email='johndoe@gmail.com', first_name='john', last_name='doe').save()
+        john = User(last_name='mathena').save()
         return 'Hello, World!'
 
     return app
