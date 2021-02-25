@@ -22,11 +22,7 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    app.register_blueprint(user)
-
-    @app.route('/hello')
-    def hello():
-        john = User(last_name='mathena').save()
-        return 'Hello, World!'
+    from lastMeal.api.v1 import auth
+    app.register_blueprint(auth.bp)
 
     return app
