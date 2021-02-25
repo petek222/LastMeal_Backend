@@ -1,6 +1,7 @@
 import os
 
 from flask import Flask
+from lastMeal.models import User
 
 
 def create_app(test_config=None):
@@ -22,6 +23,7 @@ def create_app(test_config=None):
 
     @app.route('/hello')
     def hello():
+        john = User(last_name='mathena').save()
         return 'Hello, World!'
 
     return app
