@@ -23,7 +23,7 @@ def create_app(test_config=None):
 
     @app.route('/hello')
     def hello():
-        john = User(last_name='mathena').save()
+        my_user = User(email='johndoe@gmail.com', first_name='john', last_name='doe').save()
         return 'Hello, World!'
 
     return app
