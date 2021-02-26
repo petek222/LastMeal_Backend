@@ -2,15 +2,14 @@ from flask import Flask
 import pymongo
 from pymongo import MongoClient
 import functools
-from lastMeal.src.server.models.user import User # This might be fine?? Linter complaining but not interpreter
+from lastMeal.src.server.models.user import User # 'Error' is just IDE complaining
 
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
 
-
+# Blueprint for connection to main process
 user = Blueprint('user', __name__)
-# @simple_page.route('/<page>')
 
 # Create/Register a new user
 @user.route('/v1/user', methods=['GET'])
