@@ -1,7 +1,8 @@
 import os
 
 from flask import Flask
-from lastMeal.src.server.api.v1.user import user
+from lastMeal.models import User
+
 
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
@@ -21,10 +22,7 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    app.register_blueprint(user)
-
-    @app.route('/hello')
-    def hello():
-        return 'Hello, World!'
+    from lastMeal.api.v1 import auth
+    app.register_blueprint(auth.bp)
 
     return app

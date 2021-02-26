@@ -1,16 +1,13 @@
-from flask import Flask
-import pymongo
-from pymongo import MongoClient
 import functools
-from lastMeal.src.server.models.user import User # 'Error' is just IDE complaining
 import bcrypt
-
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
+from lastMeal.models import User
+from pymongo import MongoClient
 
 # Blueprint for connection to main process
-user = Blueprint('user', __name__)
+bp = Blueprint('auth', __name__, url_prefix='/v1/user')
 
 # Connect to DB
 mongo_client = MongoClient('localhost', 27017)
@@ -18,7 +15,7 @@ db = mongo_client["user"] # Added line to have access to db
 host_info = mongo_client['HOST'] 
 
 # Create/Register a new user
-@user.route('/v1/user', methods=['GET'])
+@bp.route('', methods=['GET'])
 def register_user():
     print("Hey There!")
     print ("\nhost:", host_info)
@@ -26,8 +23,8 @@ def register_user():
 
     # Obviously these fields will need to take in the JSON sent from the client in actuality
     # This is just for testing
-    username = 'pedobabon22'
-    email = 'peter.e.koncelik@vanderbilt.edu'
+    username = 'petek222'
+    email = 'peter.koncelik@vanderbilt.edu'
     user_salt = bcrypt.gensalt()
     password = "userpassword"
     user_hash = bcrypt.hashpw(password.encode('utf-8'), user_salt) # Make sure this accepts API argument when real
@@ -50,17 +47,17 @@ def register_user():
 
 # Log In as an existing user
 # Remember to add in user_sessions here for logins
-@user.route('/v1/user/login', methods=['POST'])
+@bp.route('/v1/user/login', methods=['POST'])
 def login_user():
     return "<h1>Here is where we can have the user login!</h1>"
 
 # Update preexising user profile
-@user.route('/v1/user/update', methods=['PUT'])
+@bp.route('/v1/user/update', methods=['PUT'])
 def update_user():
     return "<h1>Here is where we can have the user update their profile/login information!</h1>"
 
 # Log out as an existing user
-@user.route('/v1/user/logout', methods=['DELETE'])
+@bp.route('/logout', methods=['DELETE'])
 def logout_user():
     return "<h1>Here is where we can have the user log out!</h1>"
 
@@ -68,11 +65,11 @@ def logout_user():
 # Basic Getters/Setters for Users below
 
 # Fetch user profile data by username (other?)
-@user.route('/v1/user/:username', methods=['GET'])
+@bp.route('/:username', methods=['GET'])
 def fetch_user():
     return "<h1>Here is where we can fetch the user's information!</h1>"
 
 # Check if a profile exists with the given username
-@user.route('/v1/user/:username', methods=['HEAD'])
+@bp.route('/:username', methods=['HEAD'])
 def check_user():
     return "<h1>Here is where we can check if a user exists!</h1>"
