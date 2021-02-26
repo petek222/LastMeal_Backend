@@ -24,8 +24,8 @@ class User(Document):
     last_name = StringField(max_length=50)
     email = StringField(required=True)
     username = StringField(required=True)
-    user_hash = StringField(required=True)
-    user_salt = StringField(required=True)
+    hash = StringField(required=True)
+    salt = StringField(required=True)
     pantry = ObjectIdField(db_field='pantry') # Check syntax here; same as 'ref' for mongoose?
 
     def validate_username(self, username):
@@ -35,7 +35,7 @@ class User(Document):
             return False
     
     def validate_email(self, email):
-        if (re.match('/^[^\s@]+@[^\s@]+\.[^\s@]+$/', email)):
+        if (re.match(r"[^@]+@[^@]+\.[^@]+", email)):
             return True
         else:
             return False
@@ -46,10 +46,6 @@ class User(Document):
 
     def authenticate_user(self, user_input):
         return (encrypt_password(self.user_salt, user_input) == self.user_hash)
-    
-    # Validation calls
-    username.validate = validate_username
-    email.validate = validate_email
 
     @classmethod
     def pre_save(self, cls, sender, document, **kwargs):
@@ -57,7 +53,7 @@ class User(Document):
         self.last_name = re.sub('/<(?:.|\n)*?>/gm', "", self.last_name)
         # Add any other pre-save validation that we want here
 
-# signals pre_save in mongoengine calls the pre_save function above upon saving a document
-signals.pre_save.connect(User.pre_save, sender=User)
+# # signals pre_save in mongoengine calls the pre_save function above upon saving a document
+# signals.pre_save.connect(User.pre_save, sender=User)
 
 
