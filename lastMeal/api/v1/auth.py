@@ -3,7 +3,7 @@ import bcrypt
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
-from lastMeal.models import User
+from lastMeal.models.user import User
 from pymongo import MongoClient
 
 # Blueprint for connection to main process
@@ -23,8 +23,8 @@ def register_user():
 
     # Obviously these fields will need to take in the JSON sent from the client in actuality
     # This is just for testing
-    username = 'petek222'
-    email = 'peter.koncelik@vanderbilt.edu'
+    username = 'tedk2'
+    email = 'teddy.koncelik@loyola.edu'
     user_salt = bcrypt.gensalt()
     password = "userpassword"
     user_hash = bcrypt.hashpw(password.encode('utf-8'), user_salt) # Make sure this accepts API argument when real
