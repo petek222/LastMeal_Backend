@@ -23,6 +23,8 @@ host_info = mongo_client['HOST']
 # @param request_data['username'] username for account
 # @param request_data['password'] password for account
 # @param request_data['email'] email for account
+# @param first_name = request_data['first_name']
+# @param last_name = request_data['last_name']
 @bp.route('', methods=['GET'])
 def register_user():
     print("let's try to register a new user!")
@@ -35,13 +37,15 @@ def register_user():
     username = request_data['username']
     email = request_data['email']
     password = request_data['password']
+    firstName = request_data['first_name']
+    lastName = request_data['last_name']
     user_salt = bcrypt.gensalt()
     user_hash = bcrypt.hashpw(password.encode('utf-8'), user_salt) # Make sure this accepts API argument when real
     
     # First check if a user with the given username/email already exists
     if db.user.find({'username': { "$in": [username]}}).count() > 0 or db.user.find({'email': { "$in": [email]}}).count() > 0:
         response_obj = {
-            "error": "supplied username already exists"
+            "error": "account with supplied username/email already exists"
         }
         resp = make_response(response_obj, 400)
         resp.headers['Content-Type'] = 'application/json'
@@ -50,7 +54,7 @@ def register_user():
     # Perform Validation Checks on requisite fields, and create the user if valid
     if validation.validate_username(username) and validation.validate_email(email):
         # Using mongoengine/pymongo schema
-        my_user = User(username = username, email=email, first_name='pedro', last_name='babon', salt=user_salt, hash=user_hash).save()
+        my_user = User(username = username, email=email, first_name=firstName, last_name=lastName, salt=user_salt, hash=user_hash).save()
         response_obj = {
             "username": username,
             "email": email
