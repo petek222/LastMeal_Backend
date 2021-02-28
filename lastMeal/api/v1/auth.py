@@ -5,6 +5,8 @@ from flask import (
 )
 from lastMeal.models.user import User
 from pymongo import MongoClient
+from bson.objectid import ObjectId
+
 
 # Blueprint for connection to main process
 bp = Blueprint('auth', __name__, url_prefix='/v1/user')
@@ -32,15 +34,17 @@ def register_user():
     request_data = request.json
     validation = User()
 
-    # Obviously these fields will need to take in the JSON sent from the client in actuality
-    # This is just for testing
+    # Grab the needed fields from request body
     username = request_data['username']
     email = request_data['email']
     password = request_data['password']
     firstName = request_data['first_name']
     lastName = request_data['last_name']
+
+    # Generate things not sent via request
     user_salt = bcrypt.gensalt()
-    user_hash = bcrypt.hashpw(password.encode('utf-8'), user_salt) # Make sure this accepts API argument when real
+    user_hash = bcrypt.hashpw(password.encode('utf-8'), user_salt)
+    pantry_id = ObjectId()
     
     # First check if a user with the given username/email already exists
     if db.user.find({'username': { "$in": [username]}}).count() > 0 or db.user.find({'email': { "$in": [email]}}).count() > 0:
@@ -53,8 +57,8 @@ def register_user():
 
     # Perform Validation Checks on requisite fields, and create the user if valid
     if validation.validate_username(username) and validation.validate_email(email):
-        # Using mongoengine/pymongo schema
-        my_user = User(username = username, email=email, first_name=firstName, last_name=lastName, salt=user_salt, hash=user_hash).save()
+        # Using mongoengine/pymongo schema to create and save the user
+        my_user = User(username = username, email=email, first_name=firstName, last_name=lastName, salt=user_salt, hash=user_hash, pantry = pantry_id).save()
         response_obj = {
             "username": username,
             "email": email
@@ -63,7 +67,7 @@ def register_user():
         resp.headers['Content-Type'] = 'application/json'
         return resp
 
-    # Otherwise return a false (change for API as needed)
+    # Otherwise return an error (change for API as needed)
     else:
         response_obj = {
             "error": "Invalid username/password"
