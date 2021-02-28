@@ -44,8 +44,8 @@ class User(Document):
         self.user_salt = make_salt()
         self.user_hash = encrypt_password(self.user_salt, password)
 
-    def authenticate_user(self, user_input):
-        return (encrypt_password(self.user_salt, user_input) == self.user_hash)
+    def authenticate_user(self, user_input, user_salt, user_hash):
+        return (encrypt_password(user_salt, user_input) == user_hash)
 
     @classmethod
     def pre_save(self, cls, sender, document, **kwargs):
