@@ -17,6 +17,12 @@ host_info = mongo_client['HOST']
 # Create/Register a new user
 # Syntax can probably be cleaned up: look at docs
 # This also needs more robust error handling via try-catch
+# ******************************************************************************
+# Log In as an existing user
+#
+# @param request_data['username'] username for account
+# @param request_data['password'] password for account
+# @param request_data['email'] email for account
 @bp.route('', methods=['GET'])
 def register_user():
     print("let's try to register a new user!")
@@ -66,6 +72,12 @@ def register_user():
 # Currently sessions are omitted/being punted to the native client
 # Syntax can probably be cleaned up: look at docs
 # This also needs more robust error handling via try-catch
+#
+# ******************************************************************************
+# Log In as an existing user
+#
+# @param request_data['username'] username for login
+# @param request_data['password'] password for login
 @bp.route('/login', methods=['GET', 'POST'])
 def login_user():
     print("let's try to login a new user")
