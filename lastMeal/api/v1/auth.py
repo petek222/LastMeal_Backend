@@ -1,20 +1,13 @@
 import functools
-import bcrypt
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for, make_response
 )
 from lastMeal.models.user import User
-from pymongo import MongoClient
 from bson.objectid import ObjectId
 
 
 # Blueprint for connection to main process
 bp = Blueprint('auth', __name__, url_prefix='/v1/user')
-
-# Connect to DB
-mongo_client = MongoClient('localhost', 27017)
-db = mongo_client["user"] # Added line to have access to db
-host_info = mongo_client['HOST'] 
 
 # Create/Register a new user
 # Syntax can probably be cleaned up: look at docs
@@ -27,12 +20,11 @@ host_info = mongo_client['HOST']
 # @param request_data['email'] email for account
 # @param first_name = request_data['first_name']
 # @param last_name = request_data['last_name']
-@bp.route('', methods=['GET'])
+@bp.route('/register', methods=['POST'])
 def register_user():
     print("let's try to register a new user!")
 
     request_data = request.json
-    validation = User()
 
     # Grab the needed fields from request body
     username = request_data['username']
@@ -41,13 +33,11 @@ def register_user():
     firstName = request_data['first_name']
     lastName = request_data['last_name']
 
-    # Generate things not sent via request
-    user_salt = bcrypt.gensalt()
-    user_hash = bcrypt.hashpw(password.encode('utf-8'), user_salt)
+    #How to create a pantry object whenever we create a user object?
     pantry_id = ObjectId()
-    
+
     # First check if a user with the given username/email already exists
-    if db.user.find({'username': { "$in": [username]}}).count() > 0 or db.user.find({'email': { "$in": [email]}}).count() > 0:
+    if User.objects(username=username) or User.objects(email=email):
         response_obj = {
             "error": "account with supplied username/email already exists"
         }
@@ -55,10 +45,12 @@ def register_user():
         resp.headers['Content-Type'] = 'application/json'
         return resp
 
-    # Perform Validation Checks on requisite fields, and create the user if valid
-    if validation.validate_username(username) and validation.validate_email(email):
-        # Using mongoengine/pymongo schema to create and save the user
-        my_user = User(username = username, email=email, first_name=firstName, last_name=lastName, salt=user_salt, hash=user_hash, pantry = pantry_id).save()
+    # Using mongoengine/pymongo schema to create and save the user
+    my_user = User(username = username, email=email, first_name=firstName, last_name=lastName, pantry=pantry_id)
+    try:
+        my_user.set_password(password)
+        my_user.validate()
+        my_user.save()
         response_obj = {
             "username": username,
             "email": email
@@ -66,9 +58,8 @@ def register_user():
         resp = make_response(response_obj, 201)
         resp.headers['Content-Type'] = 'application/json'
         return resp
-
-    # Otherwise return an error (change for API as needed)
-    else:
+    except Exception as e:
+        print(e)
         response_obj = {
             "error": "Invalid username/password"
         }
@@ -98,25 +89,22 @@ def login_user():
     password = request_data['password']
 
     # First check that the given username even exists in the db
-    if not db.user.find({'username': { "$in": [username]}}).count() > 0:
+    if not User.objects(username=username):
         response_obj = {
             "error": "supplied username does not exist"
         }
         resp = make_response(response_obj, 400)
         resp.headers['Content-Type'] = 'application/json'
         return resp
-    
-    # If the user exists, we grab the stored salt and hash from the db
-    user_data = db.user.find_one({'username': username}, {'hash':1, 'salt':1, 'email':1})
-    stored_hash = user_data['hash']
-    stored_salt = user_data['salt']
-    stored_email = user_data['email']
+
+    # If the user exists, we grab it from the db
+    user_data = User.objects(username=username)[0]
 
     # Impl doesnt use salt due to builtin
-    if bcrypt.checkpw(password.encode('utf8'), stored_hash.encode('utf8')):
+    if user_data.authenticate_user(password):
         response_obj = {
             "username": username,
-            "email": stored_email
+            "email": user_data.email
         }
         resp = make_response(response_obj, 200)
         resp.headers['Content-Type'] = 'application/json'
@@ -130,12 +118,12 @@ def login_user():
         return resp
 
 # Update preexising user profile
-@bp.route('/v1/user/update', methods=['PUT'])
+@bp.route('/update', methods=['PUT'])
 def update_user():
     return "<h1>Here is where we can have the user update their profile/login information!</h1>"
 
 # Log out as an existing user
-@bp.route('/logout', methods=['DELETE'])
+@bp.route('/logout', methods=['GET'])
 def logout_user():
     return "<h1>Here is where we can have the user log out!</h1>"
 
