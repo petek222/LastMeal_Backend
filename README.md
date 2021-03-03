@@ -90,6 +90,8 @@ Used to create a new user account
 }
 ```
 
+
+
 #### Error Response
 
 **Condition** : If 'username'/'password'/etc invalid.
