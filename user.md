@@ -1,9 +1,9 @@
 
-## API Reference: User
+# API Reference: User
 
 The User API contains a number of endpoints that are useful for providing basic profile and user mangement features
 
-### Register
+## Register
 
 Used to create a new user account
 
