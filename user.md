@@ -18,7 +18,7 @@ Used to create a new user account
 ```json
 {
     "username": "[8 < length < 19]",
-    "password": "[8 < length < 19]"
+    "password": "[8 < length < 19]",
     "email": "[valid email address]""
 } 
 ```
@@ -35,7 +35,7 @@ Used to create a new user account
 }
 ```
 
-#### Success Response
+### Success Response
 
 **Code** : `200 OK`
 
@@ -43,14 +43,13 @@ Used to create a new user account
 
 ```json
 {
-    "username": "pedrobabon"
+    "username": "pedrobabon",
     "email": "pedrobabon@myspace.com"
 }
 ```
+<br />
 
-
-
-#### Error Response
+### Error Response
 
 **Condition** : If 'username'/'password'/etc invalid.
 
