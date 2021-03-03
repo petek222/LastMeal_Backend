@@ -2,7 +2,7 @@
 
 This repo contains all the backend code for the API of the LastMeal team's application. We are writing the API itself with Flask, connecting to a MongoDB instance for the database, and cloud deploying via AWS. Actual code to be added over time. 
 
-### Serving the app:
+## Serving the app:
 
 Nginx is listening on port 80, and routes incoming traffic to the last\_meal.sock file in the ~/last\_meal directory. Gunicorn is running as a systemd process, and is bound to that socket as well, passing along requests to the app itself, which is made available through the wsgi.py file in ~/last\_meal/lastMeal
 
