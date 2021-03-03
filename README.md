@@ -43,5 +43,5 @@ And send requests to http://$SERVER\_IP:5000
 
 ## API Reference
 
-* [User](user.md) : `POST /v1/user/`
+* [User](user.md) : `/v1/user/`
 
