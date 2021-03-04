@@ -39,6 +39,15 @@ export FLASK_ENV=development
 flask run --host=0.0.0.0
 ```
 
+(Windows):
+
+```
+set FLASK_APP=lastMeal
+set FLASK_ENV=development
+venv\Scripts\activate
+flask run --host=0.0.0.0
+```
+
 And send requests to http://$SERVER\_IP:5000
 
 ## API Reference
