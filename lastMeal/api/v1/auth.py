@@ -32,9 +32,6 @@ def register_user():
     firstName = request_data['first_name']
     lastName = request_data['last_name']
 
-    #How to create a pantry object whenever we create a user object?
-    pantry_id = ObjectId()
-
     # First check if a user with the given username/email already exists
     if User.objects(username=username) or User.objects(email=email):
         response_obj = {
@@ -45,7 +42,7 @@ def register_user():
         return resp
 
     # Using mongoengine/pymongo schema to create and save the user
-    my_user = User(username = username, email=email, first_name=firstName, last_name=lastName, pantry=pantry_id)
+    my_user = User(username = username, email=email, first_name=firstName, last_name=lastName)
     try:
         my_user.set_password(password)
         my_user.validate()
@@ -179,8 +176,6 @@ def update_user_password(username):
     request_data = request.json
     changed_password = request_data['password']
 
-    # Using mongoengine/pymongo schema to create and save the user
-    # my_user = User(username = username, email=email, first_name=firstName, last_name=lastName, pantry=pantry_id)
     try:
         current_user = User.objects(username=username)[0]
         
