@@ -37,15 +37,6 @@ export FLASK_ENV=development
 flask run --host=0.0.0.0
 ```
 
-(Windows):
-
-```
-set FLASK_APP=lastMeal
-set FLASK_ENV=development
-venv\Scripts\activate
-flask run --host=0.0.0.0
-```
-
 And send requests to http://$SERVER\_IP:5000
 
 (If you want to run the app on the server, but still print debug information, the above steps must be prefaced with `sudo systemctl stop last_meal`.
