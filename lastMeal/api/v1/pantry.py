@@ -22,7 +22,7 @@ def create_ingredient(username):
     exp_date = datetime.strptime(exp_date, "%Y-%m-%d")
     user = User.objects(username=username)
     if user.first() == None:
-        return ({"error": "requested user not found"}, 400)
+        return ({"error": "requested user not found"}, 404)
 
     try:
         my_ingredient = Ingredient(name=name, quantity=quantity, expiration_date=exp_date, user=user.first())
@@ -39,7 +39,7 @@ def read_ingredient(username):
     print("Retrieving ingredients.")
     user = User.objects(username=username)
     if user.first() == None:
-        return ({"error": "requested user not found"}, 400)
+        return ({"error": "requested user not found"}, 404)
     return ({"ingredients": json.loads(Ingredient.objects(user=user.first()).to_json())}, 200)
 
 # Update an ingredient based on the ingredient ID
@@ -50,7 +50,7 @@ def update_ingredient(ingredient_id):
     request_data = request.json
     ingredient = Ingredient.objects(id=ObjectId(ingredient_id))
     if ingredient.first() == None:
-        return ({"error": "requested ingredient not found"}, 400)
+        return ({"error": "requested ingredient not found"}, 404)
 
     try:
         ingredient.first().update(**request_data)
@@ -64,9 +64,14 @@ def update_ingredient(ingredient_id):
 @bp.route('/delete/<ingredient_id>', methods=["DELETE"])
 def delete_ingredient(ingredient_id):
     print("Deleting ingredient.")
-    ingredient = Ingredient.objects(id=ObjectId(ingredient_id))
+    try:
+        obj_id = ObjectId(ingredient_id)
+    except Exception as e:
+        print(e)
+        return ({"error": "ingredient_id not a valid object id"}, 400)
+    ingredient = Ingredient.objects(id=obj_id)
     if ingredient.first() == None:
-        return ({"error": "requested ingredient not found"}, 400)
+        return ({"error": "requested ingredient not found"}, 404)
 
     try:
         ingredient.first().delete()
