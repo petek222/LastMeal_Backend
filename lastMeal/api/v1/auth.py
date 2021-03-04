@@ -170,7 +170,7 @@ def check_user(username):
 
     # If the user does not exist, send back a 404 not found
     if not User.objects(username=username):
-        return ('', 400)
+        return ('', 404)
 
     # If the user exists, return a status 200
     else:
