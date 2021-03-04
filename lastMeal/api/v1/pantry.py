@@ -30,7 +30,7 @@ def create_ingredient(username):
         return ({"name": name, "quantity": quantity, "expiration_date": exp_date}, 201)
     except Exception as e:
         print(e)
-        return ({"error": "could not save requested ingredient"}, 401)
+        return ({"error": "could not save requested ingredient"}, 400)
 
 # Retrieve all ingredients associated with a user
 # ******************************************************************************
@@ -54,14 +54,23 @@ def update_ingredient(ingredient_id):
 
     try:
         ingredient.first().update(**request_data)
-        return ({"data_updated": request_data}, 201)
+        return ({"data_updated": request_data}, 200)
     except Exception as e:
         print(e)
         return ({"error": "Update Unsucessful"}, 400)
-    return 'ok'
 
-## Delete an ingredient based on the ingredient ID
-## ******************************************************************************
-#@bp.route('/delete/<ingredient_id>', methods=["DELETE"])
-#def create_ingredient(ingredient_id):
-    #print("Deleting ingredient.")
+# Delete an ingredient based on the ingredient ID
+# ******************************************************************************
+@bp.route('/delete/<ingredient_id>', methods=["DELETE"])
+def delete_ingredient(ingredient_id):
+    print("Deleting ingredient.")
+    ingredient = Ingredient.objects(id=ObjectId(ingredient_id))
+    if ingredient.first() == None:
+        return ({"error": "requested ingredient not found"}, 400)
+
+    try:
+        ingredient.first().delete()
+        return ({"deleted": ingredient_id}, 200)
+    except Exception as e:
+        print(e)
+        return ({"error": "Deletion unsuccessful"}, 400)
