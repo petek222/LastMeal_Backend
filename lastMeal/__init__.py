@@ -25,4 +25,7 @@ def create_app(test_config=None):
     from lastMeal.api.v1 import auth
     app.register_blueprint(auth.bp)
 
+    from lastMeal.api.v1 import pantry
+    app.register_blueprint(pantry.bp)
+
     return app

@@ -1,7 +1,7 @@
 import functools
 import json
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, session, url_for, make_response
+    Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
 from lastMeal.models.user import User
 from bson.objectid import ObjectId
@@ -32,38 +32,20 @@ def register_user():
     firstName = request_data['first_name']
     lastName = request_data['last_name']
 
-    #How to create a pantry object whenever we create a user object?
-    pantry_id = ObjectId()
-
     # First check if a user with the given username/email already exists
     if User.objects(username=username) or User.objects(email=email):
-        response_obj = {
-            "error": "account with supplied username/email already exists"
-        }
-        resp = make_response(response_obj, 400)
-        resp.headers['Content-Type'] = 'application/json'
-        return resp
+        return ({"error": "account with supplied username/email already exists"}, 400)
 
     # Using mongoengine/pymongo schema to create and save the user
-    my_user = User(username = username, email=email, first_name=firstName, last_name=lastName, pantry=pantry_id)
+    my_user = User(username = username, email=email, first_name=firstName, last_name=lastName)
     try:
         my_user.set_password(password)
         my_user.validate()
         my_user.save()
-        response_obj = {
-            "username": username,
-            "email": email
-        }
-        resp = make_response(response_obj, 201)
-        resp.headers['Content-Type'] = 'application/json'
-        return resp
+        return ({"username": username, "email": email}, 201)
     except Exception as e:
         print(e)
-        response_obj = {
-            "error": "Invalid username/password"
-        }
-        resp = make_response(response_obj, 400)
-        resp.headers['Content-Type'] = 'application/json'
+        return ({"error": "Invalid username/password"}, 400)
         return resp
 
 # Log In as an existing user
@@ -85,41 +67,20 @@ def login_user():
 
     # First check that the given username even exists in the db
     if not User.objects(username=username):
-        response_obj = {
-            "error": "supplied username does not exist"
-        }
-        resp = make_response(response_obj, 400)
-        resp.headers['Content-Type'] = 'application/json'
-        return resp
+        return ({"error": "supplied username does not exist"}, 400)
 
     try:
         # If the user exists, we grab it from the db
-        user_data = User.objects(username=username)[0]
+        user_data = User.objects(username=username).first()
 
         # Impl doesnt use salt due to builtin
         if user_data.authenticate_user(password):
-            response_obj = {
-                "username": username,
-                "email": user_data.email
-            }
-            resp = make_response(response_obj, 200)
-            resp.headers['Content-Type'] = 'application/json'
-            return resp
+            return ({"username": username, "email": user_data.email}, 200)
         else:
-            error_obj = {
-                "error": "unauthorized"
-            }
-            resp = make_response(error_obj, 401)
-            resp.headers['Content-Type'] = 'application/json'
-            return resp
+            return ({"error": "unauthorized"}, 401)
     except Exception as e:
         print(e)
-        response_obj = {
-            "error": "Login Unsuccessful"
-        }
-        resp = make_response(response_obj, 400)
-        resp.headers['Content-Type'] = 'application/json'
-        return resp
+        return ({"error": "Login unsuccessful"}, 401)
 
 # Update preexising user profile (not including password)
 # Let a user update their username, email, first name, lastname
@@ -139,31 +100,15 @@ def update_user_profile(username):
 
     # First check that the given username even exists in the db
     if not User.objects(username=username):
-        response_obj = {
-            "error": "supplied username does not exist"
-        }
-        resp = make_response(response_obj, 400)
-        resp.headers['Content-Type'] = 'application/json'
-        return resp
+        return ({"error": "supplied username does not exist"}, 400)
 
     # Otherwise, use mongoengine/pymongo schema to update and save the user's information
     try:
-        User.objects(username=username).update(**request_data)
-
-        response_obj = {
-            "data_updated": request_data,
-        }
-        resp = make_response(response_obj, 204)
-        resp.headers['Content-Type'] = 'application/json'
-        return resp
+        User.objects(username=username).first().update(**request_data)
+        return ({"data_updated": request_data}, 201)
     except Exception as e:
         print(e)
-        response_obj = {
-            "error": "Update Unsucessful"
-        }
-        resp = make_response(response_obj, 400)
-        resp.headers['Content-Type'] = 'application/json'
-        return resp
+        return ({"error": "Update Unsucessful"}, 400)
 
 # Change the password of a preexising user profile 
 # Let a user update their username, email, first name, lastname
@@ -179,28 +124,16 @@ def update_user_password(username):
     request_data = request.json
     changed_password = request_data['password']
 
-    # Using mongoengine/pymongo schema to create and save the user
-    # my_user = User(username = username, email=email, first_name=firstName, last_name=lastName, pantry=pantry_id)
     try:
-        current_user = User.objects(username=username)[0]
+        current_user = User.objects(username=username).first()
         
         current_user.set_password(changed_password)
         current_user.validate()
         current_user.save()
-        response_obj = {
-            "username": username
-        }
-        resp = make_response(response_obj, 201)
-        resp.headers['Content-Type'] = 'application/json'
-        return resp
+        return ({"username": username}, 201)
     except Exception as e:
         print(e)
-        response_obj = {
-            "error": "Invalid username/password"
-        }
-        resp = make_response(response_obj, 400)
-        resp.headers['Content-Type'] = 'application/json'
-        return resp
+        return ({"error": "Invalid username/password"}, 400)
 
 # Log out as an existing user
 @bp.route('/logout', methods=['GET'])
@@ -220,19 +153,11 @@ def fetch_user(username):
 
     # First check that the given username even exists in the db
     if not User.objects(username=username):
-        response_obj = {
-            "error": "supplied username does not exist"
-        }
-        resp = make_response(response_obj, 400)
-        resp.headers['Content-Type'] = 'application/json'
-        return resp
+        return ({"error": "supplied username does not exist"}, 404)
 
     # If the user exists, we grab it from the db and return it
     user_data = User.objects.get(username=username).to_json()
-    response_obj = user_data
-    resp = make_response(response_obj, 200)
-    resp.headers['Content-Type'] = 'application/json'
-    return resp
+    return (user_data, 200)
     
 
 # Check if a profile exists with the given username
@@ -242,15 +167,11 @@ def fetch_user(username):
 # @path /<username>: username corresponding to the account of interest
 @bp.route('/<username>', methods=['HEAD'])
 def check_user(username):
-
     # If the user does not exist, send back a 404 not found
     if not User.objects(username=username):
-        resp = make_response(404)
-        return resp
-
+        return ('', 404)
     # If the user exists, return a status 200
     else:
-        resp = make_response(200)
-        return resp
+        return ('', 200)
     
 

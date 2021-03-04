@@ -35,7 +35,6 @@ class User(Document):
     username = StringField(required=True, validation=validate_username)
     hash = StringField(required=True)
     salt = StringField(required=True)
-    pantry = ObjectIdField(db_field='pantry') # Check syntax here; same as 'ref' for mongoose?
 
     def set_password(self, password):
         if (len(password) < 8 or len(password) > 19):
