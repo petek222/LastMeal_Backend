@@ -4,6 +4,8 @@ This repo contains all the backend code for the API of the LastMeal team's appli
 
 ## Serving the app:
 
+#### For Group 3 members running on a server:
+
 Nginx is listening on port 80, and routes incoming traffic to the last\_meal.sock file in the ~/last\_meal directory. Gunicorn is running as a systemd process, and is bound to that socket as well, passing along requests to the app itself, which is made available through the wsgi.py file in ~/last\_meal/lastMeal
 
 Both nginx and the last\_meal systemd process should be enabled in systemctl, meaning they're on by default when the server reboots. To see if this is the case, run:
@@ -24,13 +26,9 @@ If you make a change to the configuration files for nginx or the last\_meal syst
 sudo systemctl restart foo
 ```
 
-Lastly, while this configuration is useful for running a server, it doesn't provide a wealth of debug information. In order to run the server locally, where (I believe) you'll be able to print to the console, do:
+#### For local testing:
 
-```
-sudo systemctl stop last_meal
-```
-
-Then navigate to ~/last\_meal and run 
+If you don't have a server or want to print debug information, you can run the app locally. Clone the repo, then navigate to last\_meal and run
 
 ```
 export FLASK_APP=lastMeal
@@ -49,6 +47,8 @@ flask run --host=0.0.0.0
 ```
 
 And send requests to http://$SERVER\_IP:5000
+
+(If you want to run the app on the server, but still print debug information, the above steps must be prefaced with `sudo systemctl stop last_meal`.
 
 ## API Reference
 
