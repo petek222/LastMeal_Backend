@@ -32,11 +32,15 @@ def create_ingredient(username):
         print(e)
         return ({"error": "could not save requested ingredient"}, 401)
 
-## Retrieve all ingredients associated with a user
-## ******************************************************************************
-#@bp.route('/<username>', methods=["GET"])
-#def create_ingredient(username):
-    #print("Retrieving ingredients.")
+# Retrieve all ingredients associated with a user
+# ******************************************************************************
+@bp.route('/<username>', methods=["GET"])
+def read_ingredient(username):
+    print("Retrieving ingredients.")
+    user = User.objects(username=username)
+    if (user.first() == None):
+        return ({"error": "requested user not found"}, 400)
+    return ({"ingredients": json.loads(Ingredient.objects(user=user.first()).to_json())}, 200)
 
 ## Update an ingredient based on the ingredient ID
 ## ******************************************************************************
