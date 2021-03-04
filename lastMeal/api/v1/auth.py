@@ -104,7 +104,7 @@ def update_user_profile(username):
 
     # Otherwise, use mongoengine/pymongo schema to update and save the user's information
     try:
-        User.objects(username=username).update(**request_data)
+        User.objects(username=username).first().update(**request_data)
         return ({"data_updated": request_data}, 201)
     except Exception as e:
         print(e)

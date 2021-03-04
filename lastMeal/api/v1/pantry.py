@@ -38,15 +38,27 @@ def create_ingredient(username):
 def read_ingredient(username):
     print("Retrieving ingredients.")
     user = User.objects(username=username)
-    if (user.first() == None):
+    if user.first() == None:
         return ({"error": "requested user not found"}, 400)
     return ({"ingredients": json.loads(Ingredient.objects(user=user.first()).to_json())}, 200)
 
-## Update an ingredient based on the ingredient ID
-## ******************************************************************************
-#@bp.route('/update/<ingredient_id>', methods=["POST"])
-#def create_ingredient(ingredient_id):
-    #print("Updating ingredient.")
+# Update an ingredient based on the ingredient ID
+# ******************************************************************************
+@bp.route('/update/<ingredient_id>', methods=["POST"])
+def update_ingredient(ingredient_id):
+    print("Updating ingredient.")
+    request_data = request.json
+    ingredient = Ingredient.objects(id=ObjectId(ingredient_id))
+    if ingredient.first() == None:
+        return ({"error": "requested ingredient not found"}, 400)
+
+    try:
+        ingredient.first().update(**request_data)
+        return ({"data_updated": request_data}, 201)
+    except Exception as e:
+        print(e)
+        return ({"error": "Update Unsucessful"}, 400)
+    return 'ok'
 
 ## Delete an ingredient based on the ingredient ID
 ## ******************************************************************************
