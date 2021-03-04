@@ -153,7 +153,7 @@ def fetch_user(username):
 
     # First check that the given username even exists in the db
     if not User.objects(username=username):
-        return ({"error": "supplied username does not exist"}, 400)
+        return ({"error": "supplied username does not exist"}, 404)
 
     # If the user exists, we grab it from the db and return it
     user_data = User.objects.get(username=username).to_json()
@@ -167,11 +167,9 @@ def fetch_user(username):
 # @path /<username>: username corresponding to the account of interest
 @bp.route('/<username>', methods=['HEAD'])
 def check_user(username):
-
     # If the user does not exist, send back a 404 not found
     if not User.objects(username=username):
         return ('', 404)
-
     # If the user exists, return a status 200
     else:
         return ('', 200)
