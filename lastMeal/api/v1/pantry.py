@@ -44,7 +44,7 @@ def read_ingredient(username):
 
 # Update an ingredient based on the ingredient ID
 # ******************************************************************************
-@bp.route('/update/<ingredient_id>', methods=["POST"])
+@bp.route('/update/<ingredient_id>', methods=["PUT"])
 def update_ingredient(ingredient_id):
     print("Updating ingredient.")
     request_data = request.json
