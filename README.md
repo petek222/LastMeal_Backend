@@ -6,7 +6,7 @@ This repo contains all the backend code for the API of the LastMeal team's appli
 
 #### For Group 3 members running on a server:
 
-Nginx is listening on port 80, and routes incoming traffic to the last\_meal.sock file in the ~/last\_meal directory. Gunicorn is running as a systemd process, and is bound to that socket as well, passing along requests to the app itself, which is made available through the wsgi.py file in ~/last\_meal/lastMeal
+Nginx looks in its config file to determine the IP and port it'll route traffic to (so make sure to update this with the IP of your server), and sends that traffic to the last\_meal.sock file in the ~/last\_meal directory. Gunicorn is running as a systemd process, and is bound to that socket as well, passing along requests to the app itself, which is made available through the wsgi.py file in ~/last\_meal/lastMeal
 
 Both nginx and the last\_meal systemd process should be enabled in systemctl, meaning they're on by default when the server reboots. To see if this is the case, run:
 
