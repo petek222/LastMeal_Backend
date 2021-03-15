@@ -3,14 +3,18 @@ import os
 from flask import Flask
 from lastMeal.models.user import User
 
+from flask_jwt_extended import JWTManager
+
 
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
 
     app.config.from_mapping(
         SECRET_KEY='dev',
-        DATABASE=os.path.join(app.instance_path, 'lastMeal.sqlite'),
     )
+
+    app.config["JWT_SECRET_KEY"] = "changemeplease"
+    jwt = JWTManager(app)
 
     if test_config is None:
         app.config.from_pyfile('config.py', silent=True)

@@ -7,14 +7,19 @@ from lastMeal.models.user import User
 from lastMeal.models.ingredient import Ingredient
 from bson.objectid import ObjectId
 
+from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import jwt_required
+
 # Blueprint for connection to main process
 bp = Blueprint('pantry', __name__, url_prefix='/v1/pantry')
 
 # Create a new ingredient and associate it with a user
 # ******************************************************************************
 @bp.route('/create/<username>', methods=["POST"])
+@jwt_required()
 def create_ingredient(username):
-    print("Creating a new ingredient.")
+    if (username != get_jwt_identity()):
+        return ({"error": "unauthorized"}, 401)
     request_data = request.json
     name = request_data["name"]
     quantity = request_data["quantity"]
@@ -35,8 +40,11 @@ def create_ingredient(username):
 # Retrieve all ingredients associated with a user
 # ******************************************************************************
 @bp.route('/<username>', methods=["GET"])
+@jwt_required()
 def read_ingredient(username):
     print("Retrieving ingredients.")
+    if (username != get_jwt_identity()):
+        return ({"error": "unauthorized"}, 401)
     user = User.objects(username=username)
     if user.first() == None:
         return ({"error": "requested user not found"}, 404)
@@ -45,6 +53,7 @@ def read_ingredient(username):
 # Update an ingredient based on the ingredient ID
 # ******************************************************************************
 @bp.route('/update/<ingredient_id>', methods=["PUT"])
+@jwt_required()
 def update_ingredient(ingredient_id):
     print("Updating ingredient.")
     request_data = request.json
@@ -62,6 +71,7 @@ def update_ingredient(ingredient_id):
 # Delete an ingredient based on the ingredient ID
 # ******************************************************************************
 @bp.route('/delete/<ingredient_id>', methods=["DELETE"])
+@jwt_required()
 def delete_ingredient(ingredient_id):
     print("Deleting ingredient.")
     try:
