@@ -13,6 +13,9 @@ from flask_jwt_extended import jwt_required
 # Blueprint for connection to main process
 bp = Blueprint('pantry', __name__, url_prefix='/v1/pantry')
 
+def check_identity(ing, token):
+    return (ing.user.username == token)
+
 # Create a new ingredient and associate it with a user
 # ******************************************************************************
 @bp.route('/create/<username>', methods=["POST"])
@@ -60,6 +63,8 @@ def update_ingredient(ingredient_id):
     ingredient = Ingredient.objects(id=ObjectId(ingredient_id))
     if ingredient.first() == None:
         return ({"error": "requested ingredient not found"}, 404)
+    if not check_identity(ingredient.first(), get_jwt_identity()):
+        return ({"error": "Unauthorized"}, 401)
 
     try:
         ingredient.first().update(**request_data)
@@ -82,6 +87,8 @@ def delete_ingredient(ingredient_id):
     ingredient = Ingredient.objects(id=obj_id)
     if ingredient.first() == None:
         return ({"error": "requested ingredient not found"}, 404)
+    if not check_identity(ingredient.first(), get_jwt_identity()):
+        return ({"error": "Unauthorized"}, 401)
 
     try:
         ingredient.first().delete()
