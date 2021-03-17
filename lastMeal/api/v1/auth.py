@@ -6,6 +6,10 @@ from flask import (
 from lastMeal.models.user import User
 from bson.objectid import ObjectId
 
+from flask_jwt_extended import create_access_token
+from flask_jwt_extended import jwt_required
+from flask_jwt_extended import get_jwt_identity
+
 
 # Blueprint for connection to main process
 bp = Blueprint('auth', __name__, url_prefix='/v1/user')
@@ -75,7 +79,8 @@ def login_user():
 
         # Impl doesnt use salt due to builtin
         if user_data.authenticate_user(password):
-            return ({"username": username, "email": user_data.email}, 200)
+            access_token = create_access_token(identity=username)
+            return ({"username": username, "email": user_data.email, "token": access_token}, 200)
         else:
             return ({"error": "unauthorized"}, 401)
     except Exception as e:
@@ -92,8 +97,11 @@ def login_user():
 # @param request_data['username'] username for login
 # @param request_data['password'] password for login
 @bp.route('/update/<username>', methods=['PUT'])
+@jwt_required()
 def update_user_profile(username):
     print("Update preexisting user")
+    if (username != get_jwt_identity()):
+        return ({"error": "unauthorized"}, 401)
 
     # grab data from request body and instiantiate validator
     request_data = request.json
@@ -118,7 +126,10 @@ def update_user_profile(username):
 # @path /password/<username>: username of account to receive password change
 # @param request_data['password'] password for account login
 @bp.route('/password/<username>', methods=['PUT'])
+@jwt_required()
 def update_user_password(username):
+    if (username != get_jwt_identity()):
+        return ({"error": "unauthorized"}, 401)
 
     # grab data from request body and instiantiate validator
     request_data = request.json
@@ -149,7 +160,10 @@ def logout_user():
 # @method: GET
 # @path /<username>: username corresponding to the account of interest
 @bp.route('/<username>', methods=['GET'])
+@jwt_required()
 def fetch_user(username):
+    if (username != get_jwt_identity()):
+        return ({"error": "unauthorized"}, 401)
 
     # First check that the given username even exists in the db
     if not User.objects(username=username):
