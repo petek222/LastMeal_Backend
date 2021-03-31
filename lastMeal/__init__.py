@@ -32,4 +32,7 @@ def create_app(test_config=None):
     from lastMeal.api.v1 import pantry
     app.register_blueprint(pantry.bp)
 
+    from lastMeal.api.v1 import photos
+    app.register_blueprint(photos.bp)
+
     return app
