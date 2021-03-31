@@ -1,9 +1,20 @@
+proxy_cache_path /var/cache/nginx levels=1:2 keys_zone=custom_cache:10m max_size=5g inactive=1y use_temp_path=off;
+
 server {
     listen 80;
-    server_name 54.196.133.30;
+    server_name 54.237.232.9;
 
     location / {
         include proxy_params;
+        proxy_pass http://unix:/home/ubuntu/last_meal/last_meal.sock;
+    }
+
+    location /v1/photos/search {
+        include proxy_params;
+        proxy_cache custom_cache;
+        proxy_ignore_headers Cache-Control;
+        proxy_cache_valid any 1y;
+        add_header X-Cache-Status $upstream_cache_status;
         proxy_pass http://unix:/home/ubuntu/last_meal/last_meal.sock;
     }
 }
