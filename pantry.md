@@ -5,7 +5,7 @@ The pantry API supports basic CRUD operations on elements in user pantries, i.e.
 
 ## Register
 
-Used to create a new user account
+Used to create a new pantry ingredient
 
 **URL** : `/v1/pantry/create/<username>`
 
