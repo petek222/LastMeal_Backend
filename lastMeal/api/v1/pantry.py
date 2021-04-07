@@ -75,10 +75,13 @@ def update_ingredient(ingredient_id):
 
 # Delete an ingredient based on the ingredient ID
 # ******************************************************************************
-@bp.route('/delete/<ingredient_id>', methods=["DELETE"])
-@jwt_required()
-def delete_ingredient(ingredient_id):
+@bp.route('/delete/<username>', methods=["DELETE"])
+# @jwt_required()
+def delete_ingredient(username):
     print("Deleting ingredient.")
+    ingredient_id = request.args.get("ingredient")
+    print(username)
+    print(ingredient_id)
     try:
         obj_id = ObjectId(ingredient_id)
     except Exception as e:
