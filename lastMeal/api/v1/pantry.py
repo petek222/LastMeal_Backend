@@ -73,28 +73,31 @@ def update_ingredient(ingredient_id):
         print(e)
         return ({"error": "Update Unsucessful"}, 400)
 
-# Delete an ingredient based on the ingredient ID
+# Delete an ingredient based on the ingredient ID for a given user
 # ******************************************************************************
 @bp.route('/delete/<username>', methods=["DELETE"])
-# @jwt_required()
+@jwt_required()
 def delete_ingredient(username):
     print("Deleting ingredient.")
     ingredient_id = request.args.get("ingredient")
     print(username)
     print(ingredient_id)
-    try:
-        obj_id = ObjectId(ingredient_id)
-    except Exception as e:
-        print(e)
-        return ({"error": "ingredient_id not a valid object id"}, 400)
-    ingredient = Ingredient.objects(id=obj_id)
-    if ingredient.first() == None:
+
+    user = User.objects(username=username)
+    ingredients = Ingredient.objects.filter(user=user.first())
+
+    if ingredients.first() == None:
         return ({"error": "requested ingredient not found"}, 404)
-    if not check_identity(ingredient.first(), get_jwt_identity()):
+    if not check_identity(ingredients.first(), get_jwt_identity()):
         return ({"error": "Unauthorized"}, 401)
 
     try:
-        ingredient.first().delete()
+        to_be_deleted = []
+        for entry in ingredients:
+            if entry.name == ingredient_id:
+                to_be_deleted.append(entry.id)
+        
+        ingredients.filter(id__in=to_be_deleted).delete()
         return ({"deleted": ingredient_id}, 200)
     except Exception as e:
         print(e)
