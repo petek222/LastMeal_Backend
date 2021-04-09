@@ -126,10 +126,10 @@ def update_user_profile(username):
 # @path /password/<username>: username of account to receive password change
 # @param request_data['password'] password for account login
 @bp.route('/password/<username>', methods=['PUT'])
-@jwt_required()
+# @jwt_required()
 def update_user_password(username):
-    if (username != get_jwt_identity()):
-        return ({"error": "unauthorized"}, 401)
+    # if (username != get_jwt_identity()):
+    #     return ({"error": "unauthorized"}, 401)
 
     # grab data from request body and instiantiate validator
     request_data = request.json
