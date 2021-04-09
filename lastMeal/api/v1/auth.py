@@ -160,10 +160,10 @@ def logout_user():
 # @method: GET
 # @path /<username>: username corresponding to the account of interest
 @bp.route('/<username>', methods=['GET'])
-@jwt_required()
+# @jwt_required()
 def fetch_user(username):
-    if (username != get_jwt_identity()):
-        return ({"error": "unauthorized"}, 401)
+    # if (username != get_jwt_identity()):
+    #     return ({"error": "unauthorized"}, 401)
 
     # First check that the given username even exists in the db
     if not User.objects(username=username):
