@@ -58,6 +58,8 @@ def fetch_expiration():
 # 2021-04-30 (yyyy-mm-dd)
 # 1619481600000 (seconds since epoch)
 def parse_dates(date_string):
+    if date_string == '':
+        return None
 
     # Parse the string into day and time
     date_parsed = date_string.split(' ')
@@ -65,30 +67,25 @@ def parse_dates(date_string):
     number_string = date_parsed[0]
     duration = date_parsed[1]
     if '-' in number_string:
-        number_string = number_string[0]
+        my_split = number_string.split('-')
+        number_string = my_split[0]
     
     number = int(number_string)
-
-    # Convert the duration to value using dict 
-    expiration = None
     today = dt.date.today()
 
-    if duration == 'days':
+    if duration == 'days' or duration == 'day':
         expiration = today + dt.timedelta(days=number)
-    elif duration == 'weeks':
+    elif duration == 'weeks' or duration == 'week':
         expiration = today + dt.timedelta(weeks=number)
-    elif duration == 'months':
+    elif duration == 'months' or duration == 'month':
         week_count = 4 * number
         expiration = today + dt.timedelta(weeks=week_count)
-    elif duration == 'years':
+    elif duration == 'years' or duration == 'year':
         week_count = 52 * number
         expiration = today + dt.timedelta(weeks=week_count)
-    else:
-        expiration = "Error; no value able to be computed"
+    elif duration == 'hours' or duration == 'hour':
+        expiration = today + dt.timedelta(hours=number)
     
-
-    print("Value after parsing:")
-    print(expiration)
 
     # Value returned as: 2023-04-01
     return expiration
