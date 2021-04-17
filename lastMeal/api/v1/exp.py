@@ -16,6 +16,7 @@ import json
 from datetime import datetime
 from lastMeal.models.user import User
 from lastMeal.models.ingredient import Ingredient
+from lastMeal.models.expiration import Expiration
 from bson.objectid import ObjectId
 
 from flask_jwt_extended import get_jwt_identity
@@ -36,11 +37,17 @@ def fetch_expiration():
         return ({"error": "no ingredient was passed"}, 400)
 
     try:
-        pass # Make request to expiration database
+        expiration_data = json.loads(Expiration.objects(ingredient_name=ingredient).first().to_json())
+        new_data = {}
+        new_data['ingredient_name'] = expiration_data['ingredient_name']
+        new_data['freezer_expiration'] = parse_dates(expiration_data['freezer_expiration'])
+        new_data['fridge_expiration'] = parse_dates(expiration_data['fridge_expiration'])
+        new_data['pantry_expiration'] = parse_dates(expiration_data['pantry_expiration'])
+        return (new_data, 200)
     
     except Exception as e:
         print(e)
-        return ({"error": "Image could not be retrieved"}, 400)
+        return ({"error": "Expiration date could not be retrieved"}, 400)
 
 
 # We want to parse the date strings and return them in the format needed
@@ -59,7 +66,7 @@ def fetch_expiration():
 # 1619481600000 (seconds since epoch)
 def parse_dates(date_string):
     if date_string == '':
-        return None
+        return ''
 
     # Parse the string into day and time
     date_parsed = date_string.split(' ')
@@ -88,4 +95,4 @@ def parse_dates(date_string):
     
 
     # Value returned as: 2023-04-01
-    return expiration
+    return expiration.strftime("%Y-%m-%d")
