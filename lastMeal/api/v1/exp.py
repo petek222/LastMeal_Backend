@@ -37,12 +37,12 @@ def fetch_expiration():
         return ({"error": "no ingredient was passed"}, 400)
 
     try:
-        expiration_data = json.loads(Expiration.objects(ingredient_name=ingredient).first().to_json())
+        expiration_data = Expiration.objects(ingredient_name=ingredient).first()
         new_data = {}
-        new_data['ingredient_name'] = expiration_data['ingredient_name']
-        new_data['freezer_expiration'] = parse_dates(expiration_data['freezer_expiration'])
-        new_data['fridge_expiration'] = parse_dates(expiration_data['fridge_expiration'])
-        new_data['pantry_expiration'] = parse_dates(expiration_data['pantry_expiration'])
+        new_data['ingredient_name'] = expiration_data.ingredient_name
+        new_data['freezer_expiration'] = parse_dates(expiration_data.freezer_expiration)
+        new_data['fridge_expiration'] = parse_dates(expiration_data.fridge_expiration)
+        new_data['pantry_expiration'] = parse_dates(expiration_data.pantry_expiration)
         return (new_data, 200)
     
     except Exception as e:
