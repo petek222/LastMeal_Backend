@@ -47,7 +47,7 @@ def fetch_expiration():
     
     except Exception as e:
         print(e)
-        return ({"error": "Expiration date could not be retrieved"}, 400)
+        return ({"error": "Expiration date could not be retrieved"}, 404)
 
 
 # We want to parse the date strings and return them in the format needed
