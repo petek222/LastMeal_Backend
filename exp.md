@@ -52,7 +52,7 @@ Used to find an expiration date given an ingredient keyword
 
 **Condition** : If an expiration date couldn't be found or returned from the database
 
-**Code** : `400 BAD REQUEST`
+**Code** : `404 NOT FOUND`
 
 **Content** :
 
