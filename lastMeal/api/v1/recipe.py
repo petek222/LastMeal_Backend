@@ -19,7 +19,7 @@ bp = Blueprint('recipes', __name__, url_prefix='/v1/recipes')
 api_key = os.environ.get("SPOONACULAR_API_KEY")
 
 # Basic Recipe Request Based on Ingredients
-@bp.route('', methods=['GET'])
+@bp.route('', methods=['POST'])
 @jwt_required()
 def fetch_recipes():
 
