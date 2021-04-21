@@ -56,8 +56,9 @@ def fetch_recipes():
         # print(recipe_results)
 
         new_data = {}
+
         new_data['recipe_data'] = recipe_results
-        return (new_data, 200)
+        return ({'recipe_data': new_data}, 200)
     
     except Exception as e:
         print(e)
