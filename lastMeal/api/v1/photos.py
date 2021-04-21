@@ -5,6 +5,7 @@ from flask import (
 )
 
 import requests
+import os
 
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import jwt_required
@@ -12,7 +13,7 @@ from flask_jwt_extended import get_jwt_identity
 
 bp = Blueprint('photos', __name__, url_prefix='/v1/photos')
 
-PEXELS_API_KEY = ''
+PEXELS_API_KEY = os.environ.get("PEXELS_API_KEY")
 
 #set the route to nothing, because if we use a trailing slash, making a GET request to
 # /v1/photos?ingredient=apple redirects us to /v1/photos/?ingredient=apple

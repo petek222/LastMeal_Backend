@@ -38,4 +38,7 @@ def create_app(test_config=None):
     from lastMeal.api.v1 import exp
     app.register_blueprint(exp.bp)
 
+    from lastMeal.api.v1 import recipe
+    app.register_blueprint(recipe.bp)
+
     return app
