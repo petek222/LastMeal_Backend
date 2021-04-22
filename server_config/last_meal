@@ -4,7 +4,8 @@
 #max_size=5g => cache can grow up to 5 gb
 #inactive=1y => cache contents become inactive and will be deleted after a year
 #use_temp_path=off => copy stuff directly to cache instead of using temporary storage first
-proxy_cache_path /var/cache/nginx levels=1:2 keys_zone=custom_cache:10m max_size=5g inactive=1y use_temp_path=off;
+proxy_cache_path /var/cache/pictures levels=1:2 keys_zone=picture_cache:10m max_size=5g inactive=1y use_temp_path=off;
+proxy_cache_path /var/cache/recipes levels=1:2 keys_zone=recipe_cache:10m max_size=5g inactive=60m use_temp_path=off;
 
 server {
     listen 80;
@@ -17,10 +18,20 @@ server {
 
     location /v1/photos {
         include proxy_params;
-        proxy_cache custom_cache; #use the cache defined above
+        proxy_cache picture_cache; #use the cache defined above
         proxy_ignore_headers Cache-Control; #pexels requests we not cache their content - ignore them
         proxy_cache_valid 1y; #if we ignore headers, we need to specify how long content is valid before; say 1 year (note, this is different than inactivity)
         add_header X-Cache-Status $upstream_cache_status; #add a header saying if we hit the cache or not
+        proxy_pass http://unix:/home/ubuntu/last_meal/last_meal.sock;
+    }
+
+    location /v1/recipes {
+        include proxy_params;
+        proxy_cache recipe_cache;
+	proxy_cache_methods POST;
+        proxy_ignore_headers Cache-Control;
+        proxy_cache_valid 60m;
+        add_header X-Cache-Status $upstream_cache_status;
         proxy_pass http://unix:/home/ubuntu/last_meal/last_meal.sock;
     }
 }
