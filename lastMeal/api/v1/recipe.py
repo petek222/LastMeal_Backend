@@ -20,13 +20,10 @@ api_key = os.environ.get("SPOONACULAR_API_KEY")
 
 # Basic Recipe Request Based on Ingredients
 @bp.route('', methods=['GET'])
-@jwt_required()
+# @jwt_required()
 def fetch_recipes():
 
-    print(request)
     request_data = request.json
-    print(request_data)
-
     ingredientList = request_data['ingredients']
 
     if ingredientList is None:
@@ -52,8 +49,8 @@ def fetch_recipes():
         r = requests.get(endpoint, params=body, headers=headers)
         recipe_results = r.json()
 
-        # print("TESTING SPOONACULAR RECIPE API")
-        # print(recipe_results)
+        print("TESTING SPOONACULAR RECIPE API")
+        print(recipe_results)
 
         new_data = {}
 
@@ -63,5 +60,44 @@ def fetch_recipes():
     except Exception as e:
         print(e)
         return ({"error": "Error in recipe fetch request"}, 400)
+
+@bp.route('/<recipe_id>', methods=['GET'])
+# @jwt_required()
+def fetch_recipe_info(recipe_id):
+
+    if recipe_id is None:
+        return ({"error": "No recipe ID was passed"}, 400)
+    
+    try:
+        endpoint = "https://api.spoonacular.com/recipes/" + recipe_id + "/information"
+
+        body = {
+            'apiKey': api_key
+        }
+
+        headers={
+            "X-Mashape-Key": api_key,
+            "X-Mashape-Host": "mashape host"
+        }
+
+        r = requests.get(endpoint, params=body, headers=headers)
+        recipe_info_results = r.json()
+
+        new_data = {}
+
+        new_data['recipe_info'] = recipe_info_results
+        return ({'recipe_id': recipe_id, 'recipe_data': new_data}, 200)
+
+    except Exception as e:
+        print(e)
+        return ({"error: Error in recipe info fetch request"}, 400)
+
+@bp.route('save/<recipe_id>', methods=['GET'])
+# @jwt_required()
+def user_favorite_recipe(recipe_id):
+    pass 
+    # placeholder for user-favorited recipes; make sure that data is parsed before saving, and that the recipe ID is saved
+    # Upon clicking on the UI, we can redirect to the same recipeInfo page that we do for the pantry/recipe page
+
 
 # Space here for any additional parsing we want to do in the backend
