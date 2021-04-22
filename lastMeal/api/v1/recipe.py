@@ -6,7 +6,6 @@ from datetime import datetime
 from lastMeal.models.user import User
 from lastMeal.models.ingredient import Ingredient
 from bson.objectid import ObjectId
-import os
 
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
@@ -16,16 +15,13 @@ import requests
 # Blueprint for connection to main process
 bp = Blueprint('recipes', __name__, url_prefix='/v1/recipes')
 
-api_key = os.environ.get("SPOONACULAR_API_KEY")
+api_key = ''
 
 # Basic Recipe Request Based on Ingredients
 @bp.route('', methods=['POST'])
-@jwt_required()
+#@jwt_required()
 def fetch_recipes():
-
-    print(request)
     request_data = request.json
-    print(request_data)
 
     ingredientList = request_data['ingredients']
 
