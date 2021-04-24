@@ -28,8 +28,8 @@ server {
     location /v1/recipes {
         include proxy_params;
         proxy_cache recipe_cache;
-	proxy_cache_methods POST;
-	proxy_cache_key "$request_uri|$request_body";
+        proxy_cache_methods GET HEAD POST;
+        proxy_cache_key "$request_uri|$request_body";
         proxy_ignore_headers Cache-Control;
         proxy_cache_valid 60m;
         add_header X-Cache-Status $upstream_cache_status;
