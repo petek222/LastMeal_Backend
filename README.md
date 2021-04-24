@@ -47,4 +47,5 @@ And send requests to http://$SERVER\_IP:5000
 * [Pantry](pantry.md) : `/v1/pantry/`
 * [Photos](photos.md) : `/v1/photos/`
 * [Exp](exp.md) : `/v1/exp/`
+* [Favorite](favorite.md) : `/v1/favorite/`
 

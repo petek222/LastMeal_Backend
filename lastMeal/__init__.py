@@ -41,4 +41,7 @@ def create_app(test_config=None):
     from lastMeal.api.v1 import recipe
     app.register_blueprint(recipe.bp)
 
+    from lastMeal.api.v1 import favorite
+    app.register_blueprint(favorite.bp)
+
     return app

@@ -176,7 +176,7 @@ Used to change the contents of an ingredient item
 
 Removes ingredient from the database
 
-**URL** : `/v1/pantry/delete/<ingredient_id>`
+**URL** : `/v1/pantry/delete/<username>?ingredient=<ingredient_id>`
 
 **Methods** : `DELETE`
 
