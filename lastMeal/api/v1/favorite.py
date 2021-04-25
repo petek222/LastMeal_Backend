@@ -18,23 +18,25 @@ def create_favorite(username):
 #    if (username != get_jwt_identity()):
 #        return ({"error": "unauthorized"}, 401)
 
-    request_data = request.json
+    request_recv = request.json
     user = User.objects(username=username).first()
     if user == None:
         return ({"error": "requested user not found"}, 404)
-    recipe_id = request_data["recipe_id"]
-    if Favorite.objects(recipe_id=recipe_id).first() != None:
-        return ({"error": "can't favorite a recipe twice"}, 400)
-    recipe_name = request_data["recipe_name"]
-    picture = request_data["picture"]
+    request_arr = request_recv["recipeArray"]
+    for request_data in request_arr:
+        recipe_id = request_data["recipe_id"]
+        if Favorite.objects(recipe_id=recipe_id).first() != None:
+            return ({"error": "can't favorite a recipe twice"}, 400)
+        recipe_name = request_data["recipe_name"]
+        picture = request_data["picture"]
 
-    try:
-        my_favorite = Favorite(user=user, recipe_id=recipe_id, recipe_name=recipe_name, picture=picture)
-        my_favorite.save()
-        return ({"recipe_name": recipe_name, "recipe_id": recipe_id, "picture": picture}, 201)
-    except Exception as e:
-        print(e)
-        return ({"error": "could not favorite requested recipe"}, 400)
+        try:
+            my_favorite = Favorite(user=user, recipe_id=recipe_id, recipe_name=recipe_name, picture=picture)
+            my_favorite.save()
+        except Exception as e:
+            print(e)
+            return ({"error": "could not favorite requested recipe"}, 400)
+    return ({"success": "{} recipe(s) favorited".format(len(request_arr))}, 201)
 
 @bp.route('/delete/<username>', methods=["DELETE"])
 #@jwt_required()
