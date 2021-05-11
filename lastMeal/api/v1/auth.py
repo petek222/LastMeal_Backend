@@ -50,7 +50,33 @@ def register_user():
     except Exception as e:
         print(e)
         return ({"error": "Invalid username/password"}, 400)
-        return resp
+
+
+# Delete a user's account
+# ******************************************************************************
+#
+# @method: DELETE
+@bp.route('/delete/<username>', methods=['DELETE'])
+def delete_user(username):
+    print("let's try to delete an existing user")
+
+    # Placeholders  if needed
+    # request_data = request.json
+    # Grab the needed fields from request body
+    # username = request_data['username']
+
+    # First check if a user with the given username/email already exists
+    if not User.objects(username=username):
+        return ({"error": "account with supplied username does not exist"}, 400)
+
+    # Otherwise, we can delete the user from our schema
+    try:
+        User.objects(username=username).first().delete()
+        return ({"username": username}, 201)
+    except Exception as e:
+        print(e)
+        return ({"error": "Account Deletion Failed"}, 400)
+
 
 # Log In as an existing user
 # Currently sessions are omitted/being punted to the native client
@@ -65,6 +91,8 @@ def login_user():
 
     # grab data from request body and instiantiate validator
     request_data = request.json
+
+    print(request_data)
 
     username = request_data['username']
     password = request_data['password']
