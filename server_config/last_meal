@@ -8,8 +8,7 @@ proxy_cache_path /var/cache/pictures levels=1:2 keys_zone=picture_cache:10m max_
 proxy_cache_path /var/cache/recipes levels=1:2 keys_zone=recipe_cache:10m max_size=5g inactive=60m use_temp_path=off;
 
 server {
-    listen 80;
-    server_name 54.237.232.9;
+    server_name lastmeal.link;
 
     location / {
         include proxy_params;
@@ -28,11 +27,32 @@ server {
     location /v1/recipes {
         include proxy_params;
         proxy_cache recipe_cache;
-        proxy_cache_methods GET HEAD POST;
+        proxy_cache_methods POST;
         proxy_cache_key "$request_uri|$request_body";
         proxy_ignore_headers Cache-Control;
         proxy_cache_valid 60m;
         add_header X-Cache-Status $upstream_cache_status;
         proxy_pass http://unix:/home/ubuntu/last_meal/last_meal.sock;
     }
+
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/lastmeal.link/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/lastmeal.link/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+}
+
+
+server {
+    if ($host = lastmeal.link) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+    listen 80;
+    server_name lastmeal.link;
+    return 404; # managed by Certbot
+
+
 }
